@@ -49,6 +49,9 @@ TEST_CASE("Example: Create a new account", "[ex-1]") {
   REQUIRE(accounts.size() == 1);
   std::vector<std::string> empty;
   REQUIRE(transactions[{12345678, 1234}] == empty);
+
+  REQUIRE_THROWS_AS(atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30),
+                    std::invalid_argument);
 }
 
 TEST_CASE("Example: Simple widthdraw", "[ex-2]") {
@@ -57,8 +60,37 @@ TEST_CASE("Example: Simple widthdraw", "[ex-2]") {
   atm.WithdrawCash(12345678, 1234, 20);
   auto accounts = atm.GetAccounts();
   Account sam_account = accounts[{12345678, 1234}];
-
   REQUIRE(sam_account.balance == 280.30);
+
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12, 13, 20), std::invalid_argument);
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, -20),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, 500), std::runtime_error);
+
+  auto transactions = atm.GetTransactions();
+  std::vector<std::string> vect_before = transactions[{12345678, 1234}];
+  atm.WithdrawCash(12345678, 1234, 20);
+  std::vector<std::string> vect_after = transactions[{12345678, 1234}];
+  REQUIRE(vect_before.size() == vect_after.size() - 1);
+}
+
+TEST_CASE("Example: Simple Deposite", "[ex-3]") {
+  Atm atm;
+  atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
+  auto accounts = atm.GetAccounts();
+  Account sam_account = accounts[{12345678, 1234}];
+  atm.DepositCash(12345678, 1234, 100);
+  REQUIRE(sam_account.balance == 400.30);
+
+  REQUIRE_THROWS_AS(atm.DepositCash(12345678, 1234, -100),
+                    std::invalid_argument);
+  REQUIRE_THROWS_AS(atm.DepositCash(123, 12, 200), std::invalid_argument);
+
+  auto transactions = atm.GetTransactions();
+  std::vector<std::string> vect_before = transactions[{12345678, 1234}];
+  atm.DepositCash(12345678, 1234, 20);
+  std::vector<std::string> vect_after = transactions[{12345678, 1234}];
+  REQUIRE(vect_before.size() == vect_after.size() - 1);
 }
 
 TEST_CASE("Example: Print Prompt Ledger", "[ex-3]") {
@@ -73,4 +105,7 @@ TEST_CASE("Example: Print Prompt Ledger", "[ex-3]") {
       "Deposit - Amount: $32000.00, Updated Balance: $72099.90");
   atm.PrintLedger("./prompt.txt", 12345678, 1234);
   REQUIRE(CompareFiles("./ex-1.txt", "./prompt.txt"));
+
+  REQUIRE_THROWS_AS(atm.PrintLedger("./prompt.txt", 123, 15),
+                    std::invalid_argument);
 }

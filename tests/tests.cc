@@ -69,10 +69,7 @@ TEST_CASE("Example: Simple widthdraw", "[ex-2]") {
   REQUIRE_THROWS_AS(atm.WithdrawCash(12345678, 1234, 500), std::runtime_error);
 
   auto transactions = atm.GetTransactions();
-  std::vector<std::string> vect_before = transactions[{12345678, 1234}];
-  atm.WithdrawCash(12345678, 1234, 20);
-  std::vector<std::string> vect_after = transactions[{12345678, 1234}];
-  REQUIRE(vect_before.size() == vect_after.size() - 1);
+  REQUIRE(transactions[{12345678, 1234}].size() == 1);
 }
 
 TEST_CASE("Example: Simple Deposite", "[ex-3]") {
@@ -88,10 +85,7 @@ TEST_CASE("Example: Simple Deposite", "[ex-3]") {
   REQUIRE_THROWS_AS(atm.DepositCash(123, 12, 200), std::invalid_argument);
 
   auto transactions = atm.GetTransactions();
-  std::vector<std::string> vect_before = transactions[{12345678, 1234}];
-  atm.DepositCash(12345678, 1234, 20);
-  std::vector<std::string> vect_after = transactions[{12345678, 1234}];
-  REQUIRE(vect_before.size() == vect_after.size() - 1);
+  REQUIRE(transactions[{12345678, 1234}].size() == 1);
 }
 
 TEST_CASE("Example: Print prompt Ledger", "[ex-3]") {

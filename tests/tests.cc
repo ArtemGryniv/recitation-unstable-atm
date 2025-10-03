@@ -38,6 +38,7 @@ TEST_CASE("Example: Create a new account", "[ex-1]") {
   atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
   auto accounts = atm.GetAccounts();
   REQUIRE(accounts.contains({12345678, 1234}));
+
   REQUIRE(accounts.size() == 1);
 
   Account sam_account = accounts[{12345678, 1234}];

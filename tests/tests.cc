@@ -94,7 +94,7 @@ TEST_CASE("Example: Simple Deposite", "[ex-3]") {
   REQUIRE(vect_before.size() == vect_after.size() - 1);
 }
 
-TEST_CASE("Example: Print Prompt Ledger", "[ex-3]") {
+TEST_CASE("Example: Print prompt Ledger", "[ex-3]") {
   Atm atm;
   atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
   auto& transactions = atm.GetTransactions();

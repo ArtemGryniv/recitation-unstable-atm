@@ -78,7 +78,8 @@ TEST_CASE("Example: Simple Deposite", "[ex-3]") {
   auto accounts = atm.GetAccounts();
   Account sam_account = accounts[{12345678, 1234}];
   atm.DepositCash(12345678, 1234, 100);
-  REQUIRE(sam_account.balance == 400.30);
+  Account sam_account2 = accounts[{12345678, 1234}];
+  REQUIRE(sam_account2.balance == 400.30);
 
   auto transactions = atm.GetTransactions();
   REQUIRE(transactions[{12345678, 1234}].size() == 1);

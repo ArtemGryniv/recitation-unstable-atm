@@ -78,8 +78,8 @@ TEST_CASE("Example: Simple Deposite", "[ex-3]") {
   auto accounts = atm.GetAccounts();
   Account sam_account = accounts[{12345678, 1234}];
   atm.DepositCash(12345678, 1234, 100);
-  Account sam_account2 = accounts[{12345678, 1234}];
-  REQUIRE(sam_account2.balance == 400.30);
+  auto updated = atm.GetAccounts();
+  REQUIRE(std::abs(updated[{12345678, 1234}].balance - 400.30) < 1e-6);
 
   auto transactions = atm.GetTransactions();
   REQUIRE(transactions[{12345678, 1234}].size() == 1);
@@ -89,16 +89,12 @@ TEST_CASE("Example: Simple Deposite", "[ex-3]") {
   REQUIRE_THROWS_AS(atm.DepositCash(123, 12, 200), std::invalid_argument);
 }
 
-TEST_CASE("Example: Print prompt Ledger", "[ex-3]") {
+TEST_CASE("Example: Print prompt Ledger", "[ex-4]") {
   Atm atm;
   atm.RegisterAccount(12345678, 1234, "Sam Sepiol", 300.30);
-  auto& transactions = atm.GetTransactions();
-  transactions[{12345678, 1234}].push_back(
-      "Withdrawal - Amount: $200.40, Updated Balance: $99.90");
-  transactions[{12345678, 1234}].push_back(
-      "Deposit - Amount: $40000.00, Updated Balance: $40099.90");
-  transactions[{12345678, 1234}].push_back(
-      "Deposit - Amount: $32000.00, Updatd Balance: $72099.90");
+  atm.WithdrawCash(12345678, 1234, 200.40);
+  atm.DepositCash(12345678, 1234, 40000.00);
+  atm.DepositCash(12345678, 1234, 32000.00);
   atm.PrintLedger("./prompt.txt", 12345678, 1234);
   REQUIRE(CompareFiles("./ex-1.txt", "./prompt.txt"));
 
